@@ -65,8 +65,7 @@ dependencies {
     implementation ("androidx.activity:activity-ktx:1.8.2")
 
     //dagger-hilt
-    implementation ("com.google.dagger:hilt-android:2.45")
-    kapt ("com.google.dagger:hilt-android-compiler:2.42")
-    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    implementation ("com.google.dagger:hilt-android:2.48")
+    kapt ("com.google.dagger:hilt-android-compiler:2.48")
     kapt ("androidx.hilt:hilt-compiler:1.1.0")
 }

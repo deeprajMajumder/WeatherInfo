@@ -12,7 +12,7 @@ buildscript{
     dependencies {
         // Add the dependency for the Google services Gradle plugin
         classpath ("com.google.gms:google-services:4.4.1")
-        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.42")
+        classpath ("com.google.dagger:hilt-android-gradle-plugin:2.48")
         classpath ("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0")
     }
 }

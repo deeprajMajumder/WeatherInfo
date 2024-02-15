@@ -1,9 +1,9 @@
+package com.deepraj.weatherinfo.utils
+
 import android.graphics.drawable.Drawable
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.deepraj.weatherinfo.utils.BindableAdapter
-import com.deepraj.weatherinfo.utils.DividerItemDecorator
 
 /**
  * Holds all custom binding adapters that bind to [RecyclerView].

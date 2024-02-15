@@ -1,26 +1,30 @@
 package com.deepraj.weatherinfo.viewModel
 
-import com.deepraj.weatherinfo.utils.Converters
-import com.deepraj.weatherinfo.utils.NetworkHelper
-import android.text.format.DateFormat
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deepraj.weatherinfo.respository.NetworkRepository
+import com.deepraj.weatherinfo.utils.Converters
+import com.deepraj.weatherinfo.utils.NetworkHelper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.ArrayList
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
+@HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val networkRepository: NetworkRepository, private val networkHelper: NetworkHelper
+    private val networkRepository: NetworkRepository,
+    private val networkHelper: NetworkHelper
 ) : ViewModel() {
+    private val TAG = WeatherViewModel::class.java.name
     private val _currentTemp = MutableLiveData<Int>()
     val currentTemp: LiveData<Int>
         get() = _currentTemp
@@ -43,16 +47,13 @@ class WeatherViewModel @Inject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         _isFailure.value = true
+        Log.d(TAG,"exceptionHandler _isFailure: ${_isFailure.value}")
     }
 
     init {
         fetchCurrentTempAndForecast()
     }
 
-    /**
-     * Exception handling of coroutines can be done with more elegant way. For this assignment time
-     * frame, doing in the brute force approach.
-     */
     private fun fetchCurrentTempAndForecast() {
         viewModelScope.launch(exceptionHandler) {
             if (networkHelper.isNetworkConnected()) {
@@ -68,6 +69,7 @@ class WeatherViewModel @Inject constructor(
     // TODO - improve the below brute force approach
     private suspend fun fetchForecast(coroutineScope: CoroutineScope) {
         networkRepository.getForecast("Bengaluru").let { response ->
+            Log.d(TAG,"response: ${response.body().toString()} ")
             if (response.isSuccessful) {
                 response.body()?.let { data ->
                     val forecastTempList = ArrayList<ForecastItemViewModel>()
@@ -111,6 +113,7 @@ class WeatherViewModel @Inject constructor(
     private suspend fun fetchTodayWeather(coroutineScope: CoroutineScope) {
         networkRepository.getCurrentTemperature("Bengaluru").let { response ->
             if (response.isSuccessful) {
+                Log.d(TAG,"response: ${response.body().toString()} ")
                 response.body()?.let { data ->
                     val temperatureInCelsius =
                         Converters.kelvinToCelsius(data.currentTemperatureResponse.temperature)
@@ -131,8 +134,8 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun computeDayString(dateAndTime: String): String {
-        val processedDate = dateAndTime.substringBefore(" ")
-        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(processedDate)
-        return DateFormat.format("EEEE", date).toString()
+        val timestamp = dateAndTime.toLong() * 1000 // Convert seconds to milliseconds since unix time is sent in response
+        val date = Date(timestamp)
+        return SimpleDateFormat("EEEE", Locale.getDefault()).format(date)
     }
 }

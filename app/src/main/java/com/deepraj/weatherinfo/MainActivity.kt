@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val homeViewModel: WeatherViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +25,14 @@ class MainActivity : AppCompatActivity() {
         )
         binding.apply {
             lifecycleOwner = this@MainActivity
-            viewModel = homeViewModel
+            viewModel = weatherViewModel
         }
 
         binding.forecastList.apply {
             adapter = createRecyclerViewAdapter()
         }
 
-        homeViewModel.forecastList.observe(this) {
+        weatherViewModel.forecastList.observe(this) {
             if (it.isNotEmpty()) {
                 val animation = AnimationUtils.loadAnimation(this, R.anim.slide_bottom_up)
                 binding.forecastList.startAnimation(animation)
