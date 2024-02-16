@@ -70,38 +70,37 @@ class WeatherViewModel @Inject constructor(
     }
     private suspend fun fetchForecast(coroutineScope: CoroutineScope) {
         networkRepository.getForecast("Bengaluru").let { response ->
-            Log.d(TAG,"response: ${response.body().toString()} ")
             if (response.isSuccessful) {
                 response.body()?.let { data ->
                     val forecastTempList = ArrayList<ForecastItemViewModel>()
                     val today = computeDayString(data.forecastList[0].dateAndTime)
                     var tomorrow = ""
-                    for (forecast in data.forecastList) {
-                        if (computeDayString(forecast.dateAndTime) != today) {
-                            tomorrow = computeDayString(forecast.dateAndTime)
-                            break
-                        }
-                    }
-                    var countOfDay = 0
                     var sumOfAllTemp = 0.0
+                    var countOfDay = 0
+
                     data.forecastList.forEach { forecast ->
-                        if (computeDayString(forecast.dateAndTime) != today) {
-                            if (computeDayString(forecast.dateAndTime) == tomorrow) {
+                        val forecastDay = computeDayString(forecast.dateAndTime)
+                        if (forecastDay != today) {
+                            if (tomorrow.isEmpty()) {
+                                tomorrow = forecastDay
+                            }
+                            if (forecastDay == tomorrow) {
                                 sumOfAllTemp += forecast.currentTemperatureMain.temperature
                                 countOfDay++
                             } else {
-                                val forecastItem =
-                                    ForecastItemViewModel(
-                                        sumOfAllTemp / countOfDay,
-                                        tomorrow
-                                    )
-                                tomorrow = computeDayString(forecast.dateAndTime)
-                                sumOfAllTemp = 0.0
-                                countOfDay = 0
-                                forecastTempList.add(forecastItem)
+                                forecastTempList.add(ForecastItemViewModel(sumOfAllTemp / countOfDay, tomorrow))
+                                tomorrow = forecastDay
+                                sumOfAllTemp = forecast.currentTemperatureMain.temperature
+                                countOfDay = 1
                             }
                         }
                     }
+
+                    // Add the last computed forecast item
+                    if (countOfDay > 0) {
+                        forecastTempList.add(ForecastItemViewModel(sumOfAllTemp / countOfDay, tomorrow))
+                    }
+
                     _forecastList.value = forecastTempList
                 }
             } else {
