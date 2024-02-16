@@ -38,20 +38,24 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="20&#xb0;" />
 
-        <TextView
+        <EditText
             android:id="@+id/locationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_thin"
             android:lineSpacingExtra="52sp"
             android:text="@{viewModel.cityName}"
+            android:imeOptions="actionDone"
             android:textColor="@color/subheading"
             android:textSize="36sp"
+            android:inputType="text"
             android:visibility="@{viewModel.isLoaded &amp; !viewModel.isFailure ? View.VISIBLE : View.GONE}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/todayTemperatureTextView"
-            tools:text="Bangalore" />
+            tools:text="Bangalore"
+            android:onEditorAction=
+                "@{(v, actionId, event) -> viewModel.updateCityName(v.text.toString(), actionId, v)}"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/forecastList"

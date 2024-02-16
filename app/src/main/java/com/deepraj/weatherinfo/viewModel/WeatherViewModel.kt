@@ -1,7 +1,10 @@
 package com.deepraj.weatherinfo.viewModel
 
+import android.content.Context
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,7 +32,9 @@ class WeatherViewModel @Inject constructor(
     val currentTemp: LiveData<Int>
         get() = _currentTemp
 
-    private val _cityName = MutableLiveData<String>()
+    private val _cityName = MutableLiveData<String>().apply {
+        value = "Bengaluru" //Default city
+    }
     val cityName: LiveData<String>
         get() = _cityName
 
@@ -56,6 +61,17 @@ class WeatherViewModel @Inject constructor(
     fun resetFailure() {
         _isFailure.value = false
     }
+    fun updateCityName(cityName: String, actionId: Int, view : View) : Boolean {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            _cityName.value = cityName
+            fetchCurrentTempAndForecast()
+            // Hide the keyboard
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            return true
+        }
+        return false
+    }
 
      fun fetchCurrentTempAndForecast() {
         viewModelScope.launch(exceptionHandler) {
@@ -69,7 +85,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
     private suspend fun fetchForecast(coroutineScope: CoroutineScope) {
-        networkRepository.getForecast("Bengaluru").let { response ->
+        networkRepository.getForecast(cityName.value!!).let { response ->
             if (response.isSuccessful) {
                 response.body()?.let { data ->
                     val forecastTempList = ArrayList<ForecastItemViewModel>()
@@ -111,7 +127,7 @@ class WeatherViewModel @Inject constructor(
     }
 
     private suspend fun fetchTodayWeather(coroutineScope: CoroutineScope) {
-        networkRepository.getCurrentTemperature("Bengaluru").let { response ->
+        networkRepository.getCurrentTemperature(cityName.value!!).let { response ->
             if (response.isSuccessful) {
                 Log.d(TAG,"response: ${response.body().toString()} ")
                 response.body()?.let { data ->
