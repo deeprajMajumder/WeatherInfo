@@ -53,8 +53,11 @@ class WeatherViewModel @Inject constructor(
     init {
         fetchCurrentTempAndForecast()
     }
+    fun resetFailure() {
+        _isFailure.value = false
+    }
 
-    private fun fetchCurrentTempAndForecast() {
+     fun fetchCurrentTempAndForecast() {
         viewModelScope.launch(exceptionHandler) {
             if (networkHelper.isNetworkConnected()) {
                 fetchTodayWeather(this)
@@ -65,8 +68,6 @@ class WeatherViewModel @Inject constructor(
             }
         }
     }
-
-    // TODO - improve the below brute force approach
     private suspend fun fetchForecast(coroutineScope: CoroutineScope) {
         networkRepository.getForecast("Bengaluru").let { response ->
             Log.d(TAG,"response: ${response.body().toString()} ")
@@ -125,12 +126,6 @@ class WeatherViewModel @Inject constructor(
                 coroutineScope.cancel()
             }
         }
-    }
-
-    fun retryDataFetch(@Suppress("UNUSED_PARAMETER") v: View) {
-        _isLoaded.value = false
-        _isFailure.value = false
-        fetchCurrentTempAndForecast()
     }
 
     private fun computeDayString(dateAndTime: String): String {

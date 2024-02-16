@@ -10,11 +10,20 @@
 
                 <import type="android.view.View" />
         </data>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@{viewModel.isFailure ? @color/background_error : @color/app_background}"
-    tools:context=".MainActivity">
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:context=".MainActivity">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@{@color/app_background}"
+            tools:context=".MainActivity">
 
         <TextView
             android:id="@+id/todayTemperatureTextView"
@@ -66,42 +75,6 @@
             app:layout_constraintTop_toBottomOf="@+id/locationTextView"
             app:layout_constraintVertical_bias="0.0"
             tools:listitem="@layout/forecast_item" />
-        <!-- textAlignment not support SDk 16, require layout_gravity-->
-        <TextView
-        android:id="@+id/failureTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="8dp"
-        android:fontFamily="@font/roboto_thin"
-        android:text="@string/error_message"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="54sp"
-        android:visibility="@{viewModel.isFailure ? View.VISIBLE : View.GONE}"
-        app:layout_constraintBottom_toTopOf="@+id/retryButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@string/error_message" />
-
-        <Button
-            android:id="@+id/retryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
-            android:background="@color/dark_grey"
-            android:onClick="@{viewModel::retryDataFetch}"
-            android:text="@string/retry"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:visibility="@{viewModel.isFailure ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/failureTextView" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -114,5 +87,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
