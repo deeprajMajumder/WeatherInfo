@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         weatherViewModel.isFailure.observe(this){
-            if (it == false){
+            if (it == true){
                 showSnackBarWithAction(this)
             }
         }
