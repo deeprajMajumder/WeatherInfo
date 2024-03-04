@@ -14,7 +14,7 @@ class RecyclerViewBindingAdapter {
     @JvmStatic
     @BindingAdapter("data")
     fun <T : Any> bindDataList(recyclerView: RecyclerView, liveData: LiveData<List<T>>) {
-      val adapter = recyclerView.adapter as BindableAdapter<T>
+      val adapter = recyclerView.adapter as BindableAdapter<*>
       liveData.value?.let { list ->
         adapter.setData(list)
       }
